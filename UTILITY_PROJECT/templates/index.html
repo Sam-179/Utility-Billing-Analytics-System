@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Utility Billing System</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .card { 
+            background: white; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 350px; 
+        }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        label { font-weight: bold; font-size: 0.8rem; color: #666; display: block; margin-top: 12px; }
+        input, select { 
+            width: 100%; padding: 10px; margin: 5px 0; 
+            border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box;
+        }
+        button { 
+            width: 100%; background: #764ba2; color: white; border: none; 
+            padding: 15px; border-radius: 8px; font-size: 1rem; font-weight: bold;
+            cursor: pointer; transition: 0.3s; margin-top: 15px;
+        }
+        button:hover { background: #5a3a8a; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>⚡ Bill Calculator</h2>
+        <form action="/calculate" method="POST">
+            <label>Select Service</label>
+            <select name="service">
+                <option value="Electricity">Electricity ⚡</option>
+                <option value="Water">Water 💧</option>
+            </select>
+
+            <label>Units Consumed</label>
+            <input type="number" name="units" min="0" placeholder="e.g. 250" required>
+            
+            <label>Payment Status</label>
+            <select name="status">
+                <option value="On-Time">On-Time</option>
+                <option value="Late">Late</option>
+            </select>
+
+            <label>Currency</label>
+            <select name="currency">
+                <option value="INR">Indian Rupee (₹)</option>
+                <option value="USD">US Dollar ($)</option>
+                <option value="EUR">Euro (€)</option>
+            </select>
+            
+            <button type="submit">Calculate Total</button>
+        </form>
+    </div>
+</body>
+</html>
