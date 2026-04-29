@@ -1,0 +1,13 @@
+
+def calculate_bill(units):
+    if units < 0:
+        return "Invalid input"
+
+    rate_per_unit = 5
+    total = units * rate_per_unit
+
+    return total
+
+
+print(calculate_bill(50))
+print(calculate_bill(250))
