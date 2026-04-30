@@ -103,7 +103,42 @@
                 plugins: { legend: { display: False } }
             }
         });
-    </script>
+    <script>
+    // 1. Get the data from Flask (using the |tojson filter is critical)
+    const labels = {{ chart_labels | tojson }};
+    const dataPoints = {{ chart_data | tojson }};
+
+    // 2. Check if we actually have data to prevent errors
+    if (labels.length > 0) {
+        const ctx = document.getElementById('usageChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Units Consumed',
+                    data: dataPoints,
+                    borderColor: '#1e3c72',
+                    backgroundColor: 'rgba(30, 60, 114, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    } else {
+        // Show a message if no data exists
+        document.getElementById('usageChart').parentElement.innerHTML = 
+            "<p class='text-center text-muted py-5'>No data yet. Calculate a bill to see trends!</p>";
+    }
+</script>
 
 </body>
 </html>
