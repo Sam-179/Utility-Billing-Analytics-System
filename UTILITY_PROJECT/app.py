@@ -47,7 +47,6 @@ def get_system_dates():
     now = datetime.now()
     today_str = now.strftime('%Y-%m-%d')
     
-    # Logic to find the 1st of the next month
     if now.month == 12:
         next_month = 1
         next_year = now.year + 1
@@ -118,16 +117,15 @@ def calculate():
     units = float(request.form['units'])
     today_str, auto_due_date = get_system_dates()
     
-    # 1. Slab Calculation
     base_total, slabs = calculate_slab_bill(units)
     
-    # 2. Apply 10% Discount if units < 100
+    # Apply 10% Discount if units < 100
     discount = 0.0
     if units < 100:
         discount = round(base_total * 0.10, 2)
         base_total -= discount
     
-    # 3. Late Fee Check (If today is strictly AFTER the 1st of next month)
+    # Late Fee Check
     late_fee = 0.0
     due_datetime = datetime.strptime(auto_due_date, '%Y-%m-%d')
     if datetime.now() >= (due_datetime + timedelta(days=1)):
@@ -158,7 +156,12 @@ def dashboard():
         cursor.execute("SELECT * FROM records WHERE username = ? ORDER BY date_calculated DESC", (session['username'],))
     history = cursor.fetchall()
     conn.close()
-    return render_template('dashboard.html', history=history)
+
+    # Prepare data for Chart.js (Dates and Units)
+    chart_labels = [row[7] for row in reversed(history[:10])] # Last 10 records
+    chart_data = [row[2] for row in reversed(history[:10])]
+
+    return render_template('dashboard.html', history=history, chart_labels=chart_labels, chart_data=chart_data)
 
 @app.route('/logout')
 def logout():
@@ -166,4 +169,4 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8080)

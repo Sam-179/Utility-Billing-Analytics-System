@@ -6,25 +6,27 @@
     <title>SmartBill-X | Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .hero-section { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 60px 0; border-radius: 0 0 20px 20px; }
-        .calc-container { margin-top: -50px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .navbar { background-color: #1e3c72 !important; }
-        .policy-badge { background-color: #f0fdf4; color: #166534; border-radius: 10px; padding: 15px; margin-bottom: 20px; border-left: 5px solid #22c55e; }
+        body { background-color: #f4f7f6; font-family: 'Inter', -apple-system, sans-serif; }
+        .hero-section { background: #1e3c72; color: white; padding: 80px 0 120px 0; border-radius: 0 0 30px 30px; }
+        .calc-container { margin-top: -80px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        .navbar { background-color: #1e3c72 !important; padding: 15px 0; }
+        .policy-card { background: #f0fdf4; border-left: 5px solid #22c55e; padding: 20px; border-radius: 12px; margin-bottom: 25px; }
+        .btn-primary { background: #1e3c72; border: none; padding: 15px; font-weight: 600; transition: all 0.3s; }
+        .btn-primary:hover { background: #2a5298; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">⚡ SmartBill-X</a>
+            <a class="navbar-brand fw-bold fs-3" href="/">⚡ SmartBill-X</a>
             <div class="ms-auto">
                 {% if session['username'] %}
-                    <a href="/dashboard" class="btn btn-outline-light btn-sm me-2">Dashboard</a>
-                    <a href="/logout" class="btn btn-light btn-sm">Logout</a>
+                    <a href="/dashboard" class="btn btn-outline-light btn-sm px-3 me-2">Dashboard</a>
+                    <a href="/logout" class="btn btn-light btn-sm px-3">Logout</a>
                 {% else %}
-                    <a href="/login" class="btn btn-outline-light btn-sm me-2">Login</a>
-                    <a href="/register" class="btn btn-light btn-sm">Register</a>
+                    <a href="/login" class="btn btn-outline-light btn-sm px-3 me-2">Login</a>
+                    <a href="/register" class="btn btn-light btn-sm px-3">Register</a>
                 {% endif %}
             </div>
         </div>
@@ -32,70 +34,71 @@
 
     <header class="hero-section text-center">
         <div class="container">
-            <h1 class="display-4 fw-bold">Automated Billing Portal</h1>
-            <p class="lead">Smart Analytics with Future-Date Deadlines & Automatic Discounts</p>
+            <h1 class="display-3 fw-bold mb-3">Utility Management Simplified</h1>
+            <p class="lead opacity-75">Automated slab billing, usage incentives, and real-time data tracking.</p>
         </div>
     </header>
 
-    <main class="container">
+    <main class="container mb-5">
         <div class="row justify-content-center">
             <div class="col-md-6 calc-container">
-                <h3 class="text-center mb-4">Calculate New Bill</h3>
+                <h2 class="h4 fw-bold mb-4 text-center">New Billing Analysis</h2>
                 
-                <div class="policy-badge">
-                    <p class="mb-1"><strong>🌟 Billing Incentives:</strong></p>
-                    <ul class="small mb-0">
-                        <li><b>Green Discount:</b> 10% off for usage under 100 units!</li>
-                        <li><b>Grace Period:</b> Pay by the 1st of next month to avoid late fees.</li>
-                    </ul>
+                <div class="policy-card">
+                    <p class="mb-2"><strong>🌿 Eco-Incentive Active:</strong></p>
+                    <p class="small mb-0 text-success">
+                        • 10% Discount applied automatically for usage below 100 units.<br>
+                        • Pay by the 1st of next month to maintain your "On-Time" status.
+                    </p>
                 </div>
 
                 <form action="/calculate" method="POST">
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Units Consumed</label>
-                        <input type="number" step="0.01" name="units" class="form-control form-control-lg" placeholder="Enter units (e.g. 75)" required>
+                        <label class="form-label text-muted small fw-bold text-uppercase">Enter Current Reading (Units)</label>
+                        <input type="number" step="0.01" name="units" class="form-control form-control-lg bg-light border-0" placeholder="e.g. 85.50" required>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 btn-lg shadow-sm" style="background-color: #1e3c72; border: none;">Generate Analysis</button>
+                    <button type="submit" class="btn btn-primary w-100 btn-lg shadow-sm">Calculate & Sync Data</button>
                 </form>
 
                 <div class="text-center mt-4">
                     {% if not session['username'] %}
-                        <p class="text-muted small">Log in to track your monthly consumption trends.</p>
+                        <p class="text-muted small">Authentication required to save records to the cloud.</p>
+                        <a href="/login" class="text-decoration-none fw-bold small" style="color: #1e3c72;">Existing user? Sign In &rarr;</a>
                     {% else %}
-                        <p class="text-success small">Logged in as <b>{{ session['username'] }}</b></p>
+                        <p class="text-success small fw-bold">System Status: Connected as {{ session['username'] }}</p>
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="row mt-5 text-center">
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-3 mb-3">
-                    <h6 class="text-muted">SLAB 1</h6>
-                    <h4>₹5 / Unit</h4>
-                    <small>0 - 100 Units</small>
+        <div class="row mt-5 pt-4">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm p-4 text-center">
+                    <div class="text-primary mb-2">⚡ Residential Slab 1</div>
+                    <h3 class="fw-bold mb-1">₹5.00</h3>
+                    <div class="text-muted small">0 - 100 Units</div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-3 mb-3">
-                    <h6 class="text-muted">SLAB 2</h6>
-                    <h4>₹7 / Unit</h4>
-                    <small>101 - 200 Units</small>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm p-4 text-center">
+                    <div class="text-warning mb-2">⚡ Residential Slab 2</div>
+                    <h3 class="fw-bold mb-1">₹7.00</h3>
+                    <div class="text-muted small">101 - 200 Units</div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-3 mb-3">
-                    <h6 class="text-muted">SLAB 3</h6>
-                    <h4>₹10 / Unit</h4>
-                    <small>Above 200 Units</small>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm p-4 text-center">
+                    <div class="text-danger mb-2">⚡ Residential Slab 3</div>
+                    <h3 class="fw-bold mb-1">₹10.00</h3>
+                    <div class="text-muted small">Over 200 Units</div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="text-center mt-5 py-4 text-muted border-top">
-        <p>&copy; 2026 SmartBill-X | Developed by Samskruth</p>
+    <footer class="text-center py-5 text-muted border-top bg-white">
+        <p class="mb-0">&copy; 2026 SmartBill-X | Student Engineering Project</p>
     </footer>
 
 </body>

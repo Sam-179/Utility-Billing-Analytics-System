@@ -116,6 +116,24 @@
         }
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('usageChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels|tojson }},
+            datasets: [{
+                label: 'Units Consumed',
+                data: {{ chart_data|tojson }},
+                borderColor: '#1e3c72',
+                tension: 0.3,
+                fill: true,
+                backgroundColor: 'rgba(30, 60, 114, 0.1)'
+            }]
+        }
+    });
+</script>
 
 </body>
 </html>
