@@ -3,104 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bill Analysis | SmartBill-X</title>
+    <title>SmartBill-X | Invoice</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background-color: #f8f9fa; padding-top: 50px; }
-        .result-card { border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-        .result-header { background: #1e3c72; color: white; padding: 30px; text-center; }
-        .breakdown-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .total-row { font-size: 1.5rem; font-weight: bold; color: #1e3c72; }
-        .late-fee-alert { background-color: #fff3cd; border-left: 5px solid #ffecb5; padding: 15px; border-radius: 10px; }
+        .invoice-card { background: white; border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; }
+        .invoice-header { background: #1e3c72; color: white; padding: 40px; }
+        .invoice-body { padding: 40px; }
+        .slab-detail { font-size: 0.9rem; color: #6c757d; }
+        @media print { .no-print { display: none !important; } body { background: white; padding: 0; } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card result-card">
-                <div class="result-header text-center">
-                    <h3>Calculation Successful</h3>
-                    <p class="mb-0">Analysis for {{ units }} Units Consumed</p>
-                </div>
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
                 
-                <div class="card-body p-5">
-                    <div class="row">
-                        <!-- Left Side: Text Breakdown -->
-                        <div class="col-md-6">
-                            <h5 class="mb-4">Cost Breakdown</h5>
-                            <div class="breakdown-item">
-                                <span>Slab 1 (0-100)</span>
-                                <span>₹{{ slabs[0] }}</span>
-                            </div>
-                            <div class="breakdown-item">
-                                <span>Slab 2 (101-200)</span>
-                                <span>₹{{ slabs[1] }}</span>
-                            </div>
-                            <div class="breakdown-item">
-                                <span>Slab 3 (200+)</span>
-                                <span>₹{{ slabs[2] }}</span>
-                            </div>
-                            <div class="breakdown-item">
-                                <span>Base Amount</span>
-                                <span>₹{{ base }}</span>
-                            </div>
-                            <div class="breakdown-item text-danger">
-                                <span>Late Fee (10%)</span>
-                                <span>₹{{ late }}</span>
-                            </div>
-                            <div class="breakdown-item total-row mt-3">
-                                <span>Total Payable</span>
-                                <span>₹{{ total }}</span>
-                            </div>
+                <div class="invoice-card">
+                    <div class="invoice-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-0 fw-bold">INVOICE</h2>
+                            <p class="mb-0 opacity-75 small">Generated on {{ date }}</p>
+                        </div>
+                        <div class="text-end">
+                            <h4 class="mb-0">⚡ SmartBill-X</h4>
+                        </div>
+                    </div>
 
-                            {% if late > 0 %}
-                            <div class="late-fee-alert mt-4">
-                                <strong>⚠️ Late Fee Applied:</strong> Your calculation was performed after the due date.
+                    <div class="invoice-body">
+                        <div class="mb-4">
+                            <h6 class="text-uppercase text-muted small fw-bold">Consumption Summary</h6>
+                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <span>Units Consumed</span>
+                                <span class="fw-bold">{{ units }} Units</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="text-uppercase text-muted small fw-bold">Cost Breakdown</h6>
+                            <div class="d-flex justify-content-between align-items-center py-2">
+                                <span>Sub-total (Slab Rates)</span>
+                                <span>₹{{ base + discount }}</span>
+                            </div>
+                            
+                            <!-- Discount Logic Display -->
+                            {% if discount > 0 %}
+                            <div class="d-flex justify-content-between align-items-center py-2 text-success">
+                                <span>Eco-Discount (10% Off)</span>
+                                <span>- ₹{{ discount }}</span>
                             </div>
                             {% endif %}
+
+                            <!-- Late Fee Display -->
+                            <div class="d-flex justify-content-between align-items-center py-2 text-danger">
+                                <span>Late Payment Penalty</span>
+                                <span>+ ₹{{ late }}</span>
+                            </div>
                         </div>
 
-                        <!-- Right Side: Pie Chart -->
-                        <div class="col-md-6 text-center">
-                            <h5 class="mb-4">Visual Split</h5>
-                            <canvas id="slabChart"></canvas>
+                        <div class="bg-light p-3 rounded-3 mb-4 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">Total Amount Payable</h5>
+                            <h3 class="mb-0 fw-bold text-primary">₹{{ total }}</h3>
                         </div>
-                    </div>
 
-                    <div class="text-center mt-5">
-                        <a href="/dashboard" class="btn btn-primary btn-lg px-5">View in My History</a>
-                        <br>
-                        <a href="/" class="btn btn-link mt-2 text-muted">Calculate Another</a>
+                        <div class="text-center no-print">
+                            <button onclick="window.print()" class="btn btn-dark btn-lg w-100 mb-3 shadow-sm">📥 Download PDF / Print</button>
+                            <a href="/dashboard" class="btn btn-link text-decoration-none text-muted small">Go to Dashboard &rarr;</a>
+                        </div>
                     </div>
                 </div>
+
+                <div class="text-center mt-4 no-print">
+                    <p class="text-muted small">This is a system-generated invoice for SmartBill-X users in Hyderabad.</p>
+                </div>
+
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    const ctx = document.getElementById('slabChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Slab 1', 'Slab 2', 'Slab 3', 'Late Fee'],
-            datasets: [{
-                data: [{{ slabs[0] }}, {{ slabs[1] }}, {{ slabs[2] }}, {{ late }}],
-                backgroundColor: ['#4caf50', '#ff9800', '#f44336', '#6c757d'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            plugins: {
-                legend: { position: 'bottom' }
-            },
-            cutout: '70%'
-        }
-    });
-</script>
 
 </body>
 </html>

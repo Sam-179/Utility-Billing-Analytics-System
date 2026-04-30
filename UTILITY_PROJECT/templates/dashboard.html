@@ -3,137 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | SmartBill-X</title>
+    <title>SmartBill-X | Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f4f7f6; }
-        .sidebar { background: #1e3c72; color: white; min-height: 100vh; padding: 20px; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .table thead { background-color: #1e3c72; color: white; }
-        .status-paid { color: #28a745; font-weight: bold; }
-        .late-warning { color: #dc3545; font-weight: bold; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background-color: #1e3c72; }
+        .card { border-radius: 15px; border: none; }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+        .table thead { background-color: #f8f9fa; }
     </style>
 </head>
 <body>
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block sidebar">
-            <h4 class="fw-bold mb-4">SmartBill-X</h4>
-            <p class="small text-white-50">Logged in as: <br><strong>{{ session['username'] }}</strong> ({{ session['role'] }})</p>
-            <hr>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-2"><a href="/" class="nav-link text-white">🏠 Home</a></li>
-                <li class="nav-item mb-2"><a href="/logout" class="nav-link text-white">🚪 Logout</a></li>
-            </ul>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">{% if session['role'] == 'master' %}Master Control Panel{% else %}My Billing History{% endif %}</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">⚡ SmartBill-X</a>
+            <div class="ms-auto">
+                <span class="text-light me-3">Welcome, <strong>{{ session['username'] }}</strong></span>
+                <a href="/" class="btn btn-outline-light btn-sm">New Bill</a>
+                <a href="/logout" class="btn btn-light btn-sm ms-2">Logout</a>
             </div>
+        </div>
+    </nav>
 
-            <!-- Analytics Graph Section -->
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <div class="card p-4">
-                        <h5 class="card-title">Consumption Analytics</h5>
-                        <canvas id="usageChart" height="100"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-4 bg-primary text-white">
-                        <h5>Quick Actions</h5>
-                        <p>Need to calculate a new bill?</p>
-                        <a href="/" class="btn btn-light w-100 fw-bold">New Calculation</a>
+    <div class="container pb-5">
+        <div class="row">
+            <!-- Visual Analytics Section -->
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm p-4">
+                    <h5 class="fw-bold text-dark mb-4">Consumption Trends (Last 10 Records)</h5>
+                    <div class="chart-container">
+                        <canvas id="usageChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Records Table -->
-            <div class="card p-4">
-                <h5 class="mb-3">Detailed Records</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Units</th>
-                                <th>Base Amount</th>
-                                <th>Late Fee (10%)</th>
-                                <th>Total Bill</th>
-                                <th>Due Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in history %}
-                            <tr>
-                                <td>{{ row[1] }}</td>
-                                <td>{{ row[2] }}</td>
-                                <td>₹{{ row[3] }}</td>
-                                <td class="{% if row[4] > 0 %}late-warning{% endif %}">₹{{ row[4] }}</td>
-                                <td class="fw-bold">₹{{ row[5] }}</td>
-                                <td>{{ row[6] }}</td>
-                                <td class="status-paid">Processed</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- Detailed History Table -->
+            <div class="col-12">
+                <div class="card shadow-sm p-4">
+                    <h5 class="fw-bold text-dark mb-4">Detailed Billing History</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>DATE CALCULATED</th>
+                                    <th>UNITS</th>
+                                    <th>BASE AMOUNT</th>
+                                    <th>LATE FEE</th>
+                                    <th>TOTAL PAID</th>
+                                    <th>DUE DATE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in history %}
+                                <tr>
+                                    <td class="small text-muted">{{ row[7] }}</td>
+                                    <td class="fw-bold text-primary">{{ row[2] }}</td>
+                                    <td>₹{{ row[3] }}</td>
+                                    <td class="text-danger">₹{{ row[4] }}</td>
+                                    <td class="fw-bold">₹{{ row[5] }}</td>
+                                    <td class="small">{{ row[6] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-</div>
 
-<script>
-    // Logic to pull data from the table for the graph
-    const ctx = document.getElementById('usageChart').getContext('2d');
-    const historyData = {{ history | tojson }};
-    
-    // We'll map the last 5 records for the chart
-    const labels = historyData.slice(0, 5).map(item => item[6]).reverse();
-    const totals = historyData.slice(0, 5).map(item => item[5]).reverse();
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Bill Amount (₹)',
-                data: totals,
-                borderColor: '#1e3c72',
-                backgroundColor: 'rgba(30, 60, 114, 0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            scales: { y: { beginAtZero: true } }
-        }
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('usageChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: {{ chart_labels|tojson }},
-            datasets: [{
-                label: 'Units Consumed',
-                data: {{ chart_data|tojson }},
-                borderColor: '#1e3c72',
-                tension: 0.3,
-                fill: true,
-                backgroundColor: 'rgba(30, 60, 114, 0.1)'
-            }]
-        }
-    });
-</script>
+    <!-- Chart.js Logic -->
+    <script>
+        const ctx = document.getElementById('usageChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_labels|tojson }},
+                datasets: [{
+                    label: 'Units Consumed',
+                    data: {{ chart_data|tojson }},
+                    borderColor: '#1e3c72',
+                    backgroundColor: 'rgba(30, 60, 114, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#1e3c72',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: True,
+                maintainAspectRatio: False,
+                scales: {
+                    y: { beginAtZero: True, grid: { display: False } },
+                    x: { grid: { display: False } }
+                },
+                plugins: { legend: { display: False } }
+            }
+        });
+    </script>
 
 </body>
 </html>
